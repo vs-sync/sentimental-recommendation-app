@@ -12,27 +12,21 @@ import numpy as np
 import nltk
 import string
 import re
-import os  # <-- add this
+import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
 
 # ========= Safe NLTK Downloads =========
-nltk_data_dir = os.path.join(os.path.expanduser("~"), "nltk_data")
-os.makedirs(nltk_data_dir, exist_ok=True)
-nltk.data.path.append(nltk_data_dir)
+nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
+os.makedirs(nltk_data_path, exist_ok=True)
+nltk.data.path.append(nltk_data_path)
 
-def safe_nltk_download(pkg):
-    try:
-        nltk.data.find(pkg)
-    except LookupError:
-        nltk.download(pkg.split('/')[-1], download_dir=nltk_data_dir)
-
-safe_nltk_download('corpora/stopwords')
-safe_nltk_download('tokenizers/punkt')
-safe_nltk_download('taggers/averaged_perceptron_tagger')
-safe_nltk_download('corpora/wordnet')
-safe_nltk_download('corpora/omw-1.4')
+nltk.download("punkt", download_dir=nltk_data_path)
+nltk.download("stopwords", download_dir=nltk_data_path)
+nltk.download("averaged_perceptron_tagger", download_dir=nltk_data_path)
+nltk.download("wordnet", download_dir=nltk_data_path)
+nltk.download("omw-1.4", download_dir=nltk_data_path)
 
 # ========= MODEL CLASS =========
 class SentimentRecommenderModel:
