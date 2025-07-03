@@ -5,6 +5,7 @@ Created on Fri Jun 20 15:05:29 2025
 """
 
 import streamlit as st
+import os
 import pickle
 import joblib
 import pandas as pd
@@ -12,12 +13,11 @@ import numpy as np
 import nltk
 import string
 import re
-import os
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
 
-# ========= Safe NLTK Downloads =========
+# ========= Safe NLTK Downloads for Streamlit Cloud =========
 nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
 os.makedirs(nltk_data_path, exist_ok=True)
 nltk.data.path.append(nltk_data_path)
@@ -111,7 +111,7 @@ st.set_page_config(page_title="Sentiment-Based Recommender", layout="centered")
 st.title("🛒 Sentiment-Based Product Recommender")
 st.markdown("Get product recommendations based on sentiment analysis of reviews.")
 
-# Initialize model (with error display if something breaks)
+# Initialize model
 try:
     model = SentimentRecommenderModel()
 except Exception:
