@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 20 15:05:29 2025
-@author: sayan
+Sentiment-Based Product Recommender App
 """
 
 import streamlit as st
@@ -17,7 +16,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
 
-# ========= Safe NLTK Downloads for Streamlit Cloud =========
+# ========= Setup NLTK for Streamlit Cloud =========
 nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
 os.makedirs(nltk_data_path, exist_ok=True)
 nltk.data.path.append(nltk_data_path)
@@ -28,7 +27,7 @@ nltk.download("averaged_perceptron_tagger", download_dir=nltk_data_path)
 nltk.download("wordnet", download_dir=nltk_data_path)
 nltk.download("omw-1.4", download_dir=nltk_data_path)
 
-# ========= MODEL CLASS =========
+# ========= Model Class =========
 class SentimentRecommenderModel:
     MODEL_NAME = 'stacking_model_compressed.joblib'
     VECTORIZER = 'tfidf-vectorizer.pkl'
@@ -102,16 +101,18 @@ class SentimentRecommenderModel:
             return wordnet.NOUN
 
     def lemma_text(self, text):
-        word_pos_tags = nltk.pos_tag(word_tokenize(self.remove_stopword(text)))
+        cleaned = self.remove_stopword(text)
+        tokens = word_tokenize(cleaned, language='english')  # ✅ Set language to avoid punkt_tab error
+        word_pos_tags = nltk.pos_tag(tokens)
         words = [self.lemmatizer.lemmatize(tag[0], self.get_wordnet_pos(tag[1])) for tag in word_pos_tags]
         return " ".join(words)
 
-# ========= STREAMLIT APP =========
+# ========= Streamlit App =========
 st.set_page_config(page_title="Sentiment-Based Recommender", layout="centered")
 st.title("🛒 Sentiment-Based Product Recommender")
 st.markdown("Get product recommendations based on sentiment analysis of reviews.")
 
-# Initialize model
+# Load model
 try:
     model = SentimentRecommenderModel()
 except Exception:
