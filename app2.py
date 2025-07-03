@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Sentiment-Based Product Recommender App
+Sentiment-Based Product Recommender App (Streamlit)
 """
 
 import streamlit as st
@@ -12,7 +12,7 @@ import numpy as np
 import nltk
 import string
 import re
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import TreebankWordTokenizer
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
 
@@ -21,7 +21,7 @@ nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
 os.makedirs(nltk_data_path, exist_ok=True)
 nltk.data.path.append(nltk_data_path)
 
-nltk.download("punkt", download_dir=nltk_data_path)
+# Download only required NLTK packages
 nltk.download("stopwords", download_dir=nltk_data_path)
 nltk.download("averaged_perceptron_tagger", download_dir=nltk_data_path)
 nltk.download("wordnet", download_dir=nltk_data_path)
@@ -48,6 +48,7 @@ class SentimentRecommenderModel:
 
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
+        self.tokenizer = TreebankWordTokenizer()  # ✅ Use tokenizer that doesn't require 'punkt'
 
     def getRecommendationByUser(self, user):
         return list(self.user_final_rating.loc[user].sort_values(ascending=False)[0:20].index)
@@ -102,7 +103,7 @@ class SentimentRecommenderModel:
 
     def lemma_text(self, text):
         cleaned = self.remove_stopword(text)
-        tokens = word_tokenize(cleaned, language='english')  # ✅ Set language to avoid punkt_tab error
+        tokens = self.tokenizer.tokenize(cleaned)  # ✅ No punkt dependency
         word_pos_tags = nltk.pos_tag(tokens)
         words = [self.lemmatizer.lemmatize(tag[0], self.get_wordnet_pos(tag[1])) for tag in word_pos_tags]
         return " ".join(words)
