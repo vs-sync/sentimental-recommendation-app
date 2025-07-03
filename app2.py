@@ -12,16 +12,21 @@ import numpy as np
 import nltk
 import string
 import re
+import os  # <-- add this
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
 
 # ========= Safe NLTK Downloads =========
+nltk_data_dir = os.path.join(os.path.expanduser("~"), "nltk_data")
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
 def safe_nltk_download(pkg):
     try:
         nltk.data.find(pkg)
     except LookupError:
-        nltk.download(pkg.split('/')[-1])
+        nltk.download(pkg.split('/')[-1], download_dir=nltk_data_dir)
 
 safe_nltk_download('corpora/stopwords')
 safe_nltk_download('tokenizers/punkt')
